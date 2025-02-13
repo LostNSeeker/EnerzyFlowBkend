@@ -1,59 +1,37 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
-const userSchema = new mongoose.Schema({
-  phoneNumber: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true
-  },
-  vendorId: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true
-  },
-  businessName: {
-    type: String,
-    trim: true
-  },
-  businessAddress: {
-    type: String,
-    trim: true
-  },
-  city: String,
-  pinCode: String,
-  state: String,
-  kycType: {
-    type: String,
-    enum: ['Trade License', 'MSME', 'GST', 'Others']
-  },
-  otherKycName: String,
-  kycStatus: {
-    type: String,
-    enum: ['pending', 'verified', 'rejected'],
-    default: 'pending'
-  },
-  kycDocument: String, // URL to uploaded document
-  coins: {
-    type: Number,
-    default: 2500
-  },
-  referralCode: {
-    type: String,
-    unique: true
-  },
-  referredBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  isActive: {
-    type: Boolean,
-    default: true
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
+const otpSchema = new mongoose.Schema({
+	phoneNumber: {
+		type: String,
+		required: true,
+		unique: true,
+		trim: true,
+	},
+	vendorId: {
+		type: String,
+		required: true,
+		unique: true,
+		trim: true,
+	},
+	otp: {
+		type: String,
+		required: true,
+	},
+	expiry: {
+		type: Date,
+		required: true,
+	},
 });
+
+otpSchema.pre("save", async function (next) {
+	const otp = this;
+	if (otp.isModified("otp")) {
+		otp.otp = await bcrypt.hash(otp.otp, 8);
+	}
+	next();
+});
+
+const OTP = mongoose.model("OTP", otpSchema);
+
+export default OTP;
