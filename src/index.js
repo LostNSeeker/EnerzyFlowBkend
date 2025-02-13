@@ -1,11 +1,17 @@
+import * as dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import connectDB from "./config/database.js";
+import cors from "cors"; // Import cors
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+app.use(cors()); // Use cors middleware
 
 const routersPath = path.join(__dirname, "routes");
 
@@ -22,6 +28,7 @@ const routersPath = path.join(__dirname, "routes");
 	}
 
 	const PORT = Number(process.env.PORT) || 3000;
+	connectDB();
 	app.listen(PORT, () =>
 		console.log(`Server is running on http://localhost:${PORT}`)
 	);
