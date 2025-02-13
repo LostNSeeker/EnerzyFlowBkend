@@ -5,13 +5,11 @@ const otpSchema = new mongoose.Schema({
 	phoneNumber: {
 		type: String,
 		required: true,
-		unique: true,
 		trim: true,
 	},
 	vendorId: {
 		type: String,
 		required: true,
-		unique: true,
 		trim: true,
 	},
 	otp: {

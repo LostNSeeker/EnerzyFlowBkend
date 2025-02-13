@@ -3,7 +3,7 @@ import OTP from "../models/OTP.js";
 import { generateOTP, sendSMS } from "../utils/smsService.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-
+import { APP_CONSTANTS } from "../constants/app.constants.js";
 export const loginService = async (phoneNumber, vendorId) => {
 	const user = await User.findOne({ vendorId });
 	if (!user) {
@@ -14,6 +14,8 @@ export const loginService = async (phoneNumber, vendorId) => {
 	await OTP.create({
 		phoneNumber,
 		otp: await bcrypt.hash(otp, 10),
+		vendorId,
+		expiry: new Date(Date.now() + APP_CONSTANTS.OTP_EXPIRY * 1000),
 	});
 
 	await sendSMS(phoneNumber, `Your OTP is: ${otp}`);
