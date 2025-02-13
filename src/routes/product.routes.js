@@ -1,14 +1,24 @@
-import express from 'express';
-import { auth } from '../middleware/auth.js';
-import { cache } from '../middleware/cache.js';
-import * as productController from '../controllers/product/product.controller.js';
+import express from "express";
+import { auth } from "../middleware/auth.js";
+import { cache } from "../middleware/cache.js";
+import * as productController from "../controllers/product/product.controller.js";
+import { validate } from "../middleware/validation.js";
 
 const router = express.Router();
 
-router.get('/', cache(300), productController.getAllProducts);
-router.get('/category/:category', cache(300), productController.getProductsByCategory);
-router.get('/:id', productController.getProductDetails);
-router.post('/:id/review', auth, validate(reviewValidation), productController.addReview);
-router.get('/search', productController.searchProducts);
+router.get("/", cache(300), productController.getProducts);
+router.get(
+	"/category/:category",
+	cache(300),
+	productController.getProductsDetailsByCategory
+);
+router.get("/:id", productController.getProductById);
+router.post(
+	"/:id/review",
+	auth,
+	validate(reviewValidation),
+	productController.addReview
+);
+router.get("/search", productController.searchProducts);
 
 export default router;
