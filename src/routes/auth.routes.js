@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.post(
 	"/login",
-	authLimiter,
+	// authLimiter,
 	validate(loginValidation),
 	authController.login
 );
