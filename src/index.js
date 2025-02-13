@@ -14,6 +14,7 @@ fs.readdirSync(routersPath).forEach((file) => {
 	if (file.endsWith(".routes.js")) {
 		const routerModule = require(path.join(routersPath, file));
 		const router = routerModule.router;
+		console.log('router: ', router);
 		app.use(router);
 	}
 });
