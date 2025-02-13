@@ -14,6 +14,10 @@ const userSchema = new mongoose.Schema({
     unique: true,
     trim: true
   },
+  email: {
+    type: String,
+    trim: true
+  },
   businessName: {
     type: String,
     trim: true
@@ -21,6 +25,10 @@ const userSchema = new mongoose.Schema({
   businessAddress: {
     type: String,
     trim: true
+  },
+  businessType: {
+    type: String,
+    enum: ['Resturant', 'Bar', 'Others']
   },
   city: String,
   pinCode: String,
