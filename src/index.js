@@ -4,6 +4,7 @@ import express from "express";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import connectDB from "./config/database.js";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -24,6 +25,7 @@ const routersPath = path.join(__dirname, "routes");
 	}
 
 	const PORT = Number(process.env.PORT) || 3000;
+	connectDB();
 	app.listen(PORT, () =>
 		console.log(`Server is running on http://localhost:${PORT}`)
 	);

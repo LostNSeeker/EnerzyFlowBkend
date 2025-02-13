@@ -3,6 +3,7 @@ import { auth } from "../middleware/auth.js";
 import { cache } from "../middleware/cache.js";
 import * as productController from "../controllers/product/product.controller.js";
 import { validate } from "../middleware/validation.js";
+import { reviewValidation } from "../validators/product.validators.js";
 
 const router = express.Router();
 
