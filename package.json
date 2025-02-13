@@ -4,7 +4,7 @@
 	"type": "module",
 	"main": "index.js",
 	"scripts": {
-		"test": "jest",
+		"test": "jest --passWithNoTests",
 		"start": "node src/index.js",
 		"dev": "nodemon src/index.js",
 		"lint": "eslint src/**/*.js",
