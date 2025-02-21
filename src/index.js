@@ -1,35 +1,53 @@
 import * as dotenv from "dotenv";
-dotenv.config();
 import express from "express";
 import path from "path";
-import fs from "fs";
 import { fileURLToPath } from "url";
 import connectDB from "./config/database.js";
-import cors from "cors"; // Import cors
+import cors from "cors";
+
+// Import routes
+import authRoutes from "./routes/auth.routes.js";
+import cartRoutes from "./routes/cart.routes.js";
+import orderRoutes from "./routes/order.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
+import productRoutes from "./routes/product.routes.js";
+import userRoutes from "./routes/user.routes.js";
+
+// Initialize environment variables
+dotenv.config();
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(cors()); // Use cors middleware
+// Middleware
+app.use(express.json()); // Add body parsing middleware
+app.use(cors());
 
-const routersPath = path.join(__dirname, "routes");
+// Routes
+app.get("/",(req,res)=>{
+	res.send("Welcome to EnerzyFlow Backend");
+})
+app.use("/auth", authRoutes);
+app.use("/cart", cartRoutes);
+app.use("/order", orderRoutes);
+app.use("/payment", paymentRoutes);
+app.use("/product", productRoutes);
+app.use("/user", userRoutes);
 
-// Using async IIFE to handle dynamic imports
-(async () => {
-	for (const file of fs.readdirSync(routersPath)) {
-		if (file.endsWith(".routes.js")) {
-			const fullPath = path.join(routersPath, file);
-			const fileUrl = `file:///${fullPath.replace(/\\/g, "/")}`;
-			const routerModule = await import(fileUrl);
-			const router = routerModule.default; // Change to default since routes are exported as default
-			app.use(router);
-		}
-	}
+const PORT = Number(process.env.PORT) || 3000;
 
-	const PORT = Number(process.env.PORT) || 3000;
-	connectDB();
-	app.listen(PORT, () =>
-		console.log(`Server is running on http://localhost:${PORT}`)
-	);
-})();
+// Start server
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
