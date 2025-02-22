@@ -18,11 +18,7 @@ const cartSchema = new mongoose.Schema({
 				required: true,
 				min: 1,
 			},
-			customization: {
-				color: String,
-				size: String,
-				additionalOptions: Map,
-			},
+			
 		},
 	],
 	updatedAt: {
