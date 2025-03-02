@@ -25,11 +25,7 @@ const orderSchema = new mongoose.Schema({
 				type: Number,
 				required: true,
 			},
-			customization: {
-				color: String,
-				size: String,
-				additionalOptions: Map,
-			},
+			
 		},
 	],
 	totalAmount: {
@@ -42,10 +38,7 @@ const orderSchema = new mongoose.Schema({
 		state: String,
 		pinCode: String,
 		phoneNumber: String,
-		country: {
-			type: String,
-			default: "India",
-		},
+		
 	},
 	paymentStatus: {
 		type: String,

@@ -43,6 +43,11 @@ const productSchema = new mongoose.Schema({
         default: 0,
     },
     sizes: [String],
+    lotSize: { // New field added here
+        type: Number,
+        default: 1, // Default value if not provided
+        min: 1, // Minimum value allowed
+    },
     createdAt: {
         type: Date,
         default: Date.now,
@@ -50,7 +55,6 @@ const productSchema = new mongoose.Schema({
 });
 
 // Add index for faster queries
-
 
 const Product = mongoose.model("Product", productSchema);
 

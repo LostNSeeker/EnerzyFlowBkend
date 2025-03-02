@@ -13,5 +13,5 @@ export const otpValidation = [
 
 export const profileValidation = [
 	check("name").notEmpty().withMessage("Name is required"),
-	check("email").isEmail().withMessage("Invalid email format"),
+	check("vendor").notEmpty().withMessage("Invalid Vendor ID format"),
 ];

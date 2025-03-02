@@ -1,20 +1,14 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
+  Name: {
+    type: String,
+    trim: true,
+  },
   phoneNumber: {
     type: String,
     required: true,
     unique: true,
-    trim: true,
-  },
-  vendorId: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-  },
-  email: {
-    type: String,
     trim: true,
   },
   businessName: {
@@ -27,41 +21,53 @@ const userSchema = new mongoose.Schema({
   },
   businessType: {
     type: String,
-    enum: ["Resturant", "Bar", "Others"],
+    trim: true,
   },
   city: String,
   pinCode: String,
   state: String,
-  kycType: {
-    type: String,
-    enum: ["Trade License", "MSME", "GST", "Others"],
-  },
-  otherKycName: String,
+
   kycStatus: {
     type: String,
     enum: ["pending", "verified", "rejected"],
     default: "pending",
   },
-  kycDocument: String, // URL to uploaded document
+
+  kycDocument: {
+    uri: { type: String, required: true },  // URL of the uploaded document
+    name: { type: String, required: true }, // Original file name
+    mimeType: { type: String, required: true }, // File type (image/pdf)
+    size: { type: Number, required: true },  // File size in bytes
+  },
+
   coins: {
     type: Number,
     default: 2500,
   },
+
   referralCode: {
     type: String,
     unique: true,
   },
+
   referredBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+
   isActive: {
     type: Boolean,
     default: true,
   },
+
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+
+  orders: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
+    default: [],  // Ensuring orders array is always initialized as empty
   },
 });
 
