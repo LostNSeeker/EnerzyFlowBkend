@@ -1,0 +1,829 @@
+openapi: 3.0.0
+info:
+  title: EnerzyFlow API
+  description: API documentation for EnerzyFlow
+  version: 1.0.0
+servers:
+  - url: http://localhost:5001
+    description: Local server
+
+paths:
+  /:
+    get:
+      summary: Check if API is running
+      responses:
+        '200':
+          description: API is running
+          content:
+            application/json:
+              schema:
+                type: string
+                example: API is running
+
+  /auth/login:
+    post:
+      summary: User login
+      description: User login with phone number and vendor ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phoneNumber:
+                  type: string
+                  example: "9060213352"
+                vendorId:
+                  type: string
+                  example: "vendor123"
+      responses:
+        "200":
+          description: OTP sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "OTP sent successfully"
+                  phoneNumber:
+                    type: string
+                    example: "+1234567890"
+        "400":
+          description: Login failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Login failed"
+
+  /auth/verify-otp:
+    post:
+      summary: Verify OTP
+      description: Verify the OTP sent to the user's phone number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phoneNumber:
+                  type: string
+                  example: "+1234567890"
+                otp:
+                  type: string
+                  example: "123456"
+      responses:
+        "200":
+          description: OTP verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "OTP verified successfully"
+                  token:
+                    type: string
+                    example: "jwt-token"
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "60d0fe4f5311236168a109ca"
+                      phoneNumber:
+                        type: string
+                        example: "+1234567890"
+                      vendorId:
+                        type: string
+                        example: "vendor123"
+        "400":
+          description: OTP verification failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "OTP verification failed"
+
+  /auth/profile-setup:
+    post:
+      summary: Setup user profile
+      description: Setup the user's profile
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                businessName:
+                  type: string
+                  example: "Example Business"
+                businessAddress:
+                  type: string
+                  example: "123 Example Street, Example City"
+                city:
+                  type: string
+                  example: "Example City"
+                pinCode:
+                  type: string
+                  example: "123456"
+                state:
+                  type: string
+                  example: "Example State"
+                kycType:
+                  type: string
+                  example: "GST"
+                otherKycName:
+                  type: string
+                  example: "Example KYC"
+      responses:
+        "200":
+          description: Profile setup successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Profile setup successful"
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "60d0fe4f5311236168a109ca"
+                      businessName:
+                        type: string
+                        example: "Example Business"
+                      businessAddress:
+                        type: string
+                        example: "123 Example Street, Example City"
+                      city:
+                        type: string
+                        example: "Example City"
+                      pinCode:
+                        type: string
+                        example: "123456"
+                      state:
+                        type: string
+                        example: "Example State"
+                      kycType:
+                        type: string
+                        example: "GST"
+                      otherKycName:
+                        type: string
+                        example: "Example KYC"
+        "400":
+          description: Profile setup failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Profile setup failed"
+
+  /auth/kyc-upload:
+    post:
+      summary: Upload KYC document
+      description: Upload the KYC document for the user
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                document:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: KYC document uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "KYC document uploaded successfully"
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "60d0fe4f5311236168a109ca"
+                      kyc:
+                        type: string
+                        example: "kyc-document.pdf"
+        "400":
+          description: KYC upload failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "KYC upload failed"
+
+  /profile:
+    get:
+      summary: Get user profile
+      description: Retrieves the authenticated user's profile
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Successfully retrieved profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "123"
+                  name:
+                    type: string
+                    example: "John Doe"
+                  email:
+                    type: string
+                    example: "john@example.com"
+
+    put:
+      summary: Update user profile
+      description: Updates the authenticated user's profile
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                businessName:
+                  type: string
+                  example: "Example Business"
+                businessAddress:
+                  type: string
+                  example: "123 Example Street, Example City"
+                city:
+                  type: string
+                  example: "Example City"
+                state:
+                  type: string
+                  example: "Example State"
+                pinCode:
+                  type: string
+                  example: "123456"
+      responses:
+        "200":
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Profile updated successfully"
+                  data:
+                    type: object
+                    properties:
+                      businessName:
+                        type: string
+                        example: "Example Business"
+                      businessAddress:
+                        type: string
+                        example: "123 Example Street, Example City"
+                      city:
+                        type: string
+                        example: "Example City"
+                      state:
+                        type: string
+                        example: "Example State"
+                      pinCode:
+                        type: string
+                        example: "123456"
+
+  /coins:
+    get:
+      summary: Get coins balance
+      description: Retrieves the authenticated user's coins balance
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Successfully retrieved coins balance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  balance:
+                    type: integer
+                    example: 1000
+
+  /refer:
+    post:
+      summary: Refer a friend
+      description: Allows the authenticated user to refer a friend
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phoneNumber:
+                  type: string
+                  example: "+1234567890"
+      responses:
+        "200":
+          description: Successfully referred a friend
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Referral invitation sent successfully"
+                  data:
+                    type: object
+                    properties:
+                      referrer:
+                        type: string
+                        example: "60d0fe4f5311236168a109ca"
+                      phoneNumber:
+                        type: string
+                        example: "+1234567890"
+                      status:
+                        type: string
+                        example: "pending"
+
+  /referrals:
+    get:
+      summary: Get referral history
+      description: Retrieves the authenticated user's referral history
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Successfully retrieved referral history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: "456"
+                    phoneNumber:
+                      type: string
+                      example: "+1234567890"
+                    status:
+                      type: string
+                      example: "Completed"
+
+  /products:
+    get:
+      summary: Get all products
+      description: Retrieves a list of all products
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+          description: Filter products by category
+        - in: query
+          name: sort
+          schema:
+            type: string
+          description: Sort products by criteria
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number for pagination
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Number of products per page
+      responses:
+        "200":
+          description: Successfully retrieved products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: "60d0fe4f5311236168a109ca"
+                        name:
+                          type: string
+                          example: "Product Name"
+                        price:
+                          type: number
+                          example: 19.99
+                        category:
+                          type: string
+                          example: "General Purpose"
+                        inStock:
+                          type: boolean
+                          example: true
+                        rating:
+                          type: number
+                          example: 4.5
+                        totalReviews:
+                          type: number
+                          example: 10
+        "400":
+          description: Failed to fetch products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Failed to fetch products"
+
+  /products/category/{category}:
+    get:
+      summary: Get products by category
+      description: Retrieves products by category
+      parameters:
+        - in: path
+          name: category
+          required: true
+          schema:
+            type: string
+          description: Category of the products
+      responses:
+        "200":
+          description: Successfully retrieved products by category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: "60d0fe4f5311236168a109ca"
+                        name:
+                          type: string
+                          example: "Product Name"
+                        price:
+                          type: number
+                          example: 19.99
+                        category:
+                          type: string
+                          example: "General Purpose"
+                        inStock:
+                          type: boolean
+                          example: true
+                        rating:
+                          type: number
+                          example: 4.5
+                        totalReviews:
+                          type: number
+                          example: 10
+        "400":
+          description: Failed to fetch products by category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Failed to fetch products by category"
+
+  /products/{id}:
+    get:
+      summary: Get product by ID
+      description: Retrieves a product by its ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of the product
+      responses:
+        "200":
+          description: Successfully retrieved product
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "60d0fe4f5311236168a109ca"
+                      name:
+                        type: string
+                        example: "Product Name"
+                      price:
+                        type: number
+                        example: 19.99
+                      category:
+                        type: string
+                        example: "General Purpose"
+                      inStock:
+                        type: boolean
+                        example: true
+                      rating:
+                        type: number
+                        example: 4.5
+                      totalReviews:
+                        type: number
+                        example: 10
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Product not found"
+
+  /products/{id}/review:
+    post:
+      summary: Add a review to a product
+      description: Adds a review to a product
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of the product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rating:
+                  type: integer
+                  example: 5
+                comment:
+                  type: string
+                  example: "Great product!"
+      responses:
+        "201":
+          description: Review added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Review added successfully"
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "60d0fe4f5311236168a109ca"
+                      product:
+                        type: string
+                        example: "60d0fe4f5311236168a109ca"
+                      user:
+                        type: string
+                        example: "60d0fe4f5311236168a109ca"
+                      rating:
+                        type: integer
+                        example: 5
+                      comment:
+                        type: string
+                        example: "Great product!"
+        "400":
+          description: Failed to add review
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Failed to add review"
+
+  /products/search:
+    get:
+      summary: Search products
+      description: Searches for products based on a query
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search query
+      responses:
+        "200":
+          description: Successfully searched products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: "60d0fe4f5311236168a109ca"
+                        name:
+                          type: string
+                          example: "Product Name"
+                        price:
+                          type: number
+                          example: 19.99
+                        category:
+                          type: string
+                          example: "General Purpose"
+                        inStock:
+                          type: boolean
+                          example: true
+                        rating:
+                          type: number
+                          example: 4.5
+                        totalReviews:
+                          type: number
+                          example: 10
+        "400":
+          description: Failed to search products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Failed to search products"
+
+  /cart:
+    get:
+      summary: Get cart
+      description: Retrieves the authenticated user's cart
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Successfully retrieved cart
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: string
+                        example: "60d0fe4f5311236168a109ca"
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            product:
+                              type: string
+                              example: "60d0fe4f5311236168a109ca"
+                            quantity:
+                              type: integer
+                              example: 2
+                            customization:
+                              type: object
+                              properties:
+                                color:
+                                  type: string
+                                  example: "red"
+                                size:
+                                  type: string
+                                  example: "L"
+                                additionalOptions:
+                                  type: object
+                                  additionalProperties:
+                                    type: string
+        "400":
+          description: Failed to get cart
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Failed to search products"
+                 
