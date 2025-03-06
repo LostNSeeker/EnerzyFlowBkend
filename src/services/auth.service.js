@@ -6,8 +6,9 @@ import bcrypt from "bcryptjs";
 import { APP_CONSTANTS } from "../constants/app.constants.js";
 export const loginService = async (phoneNumber, vendorId) => {
 	// Log all users in the database
-	// const allUsers = await User.find({});
-	// console.log("All users in database:", allUsers);
+	console.log(phoneNumber, vendorId);
+	const allUsers = await User.find({});
+	console.log("All users in database:", allUsers);
 	
 	const user = await User.findOne({ vendorId });
 	

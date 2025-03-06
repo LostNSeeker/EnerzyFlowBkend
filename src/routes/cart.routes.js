@@ -9,13 +9,13 @@ import {
 
 const router = express.Router();
 
-router.get("/", auth, cartController.getCart);
-router.post("/add", auth, validate(cartValidation), cartController.addToCart);
-router.put("/update/:itemId", auth, cartController.updateCartItem);
-router.delete("/remove/:itemId", auth, cartController.removeFromCart);
+router.get("/", cartController.getCart);
+router.post("/add", validate(cartValidation), cartController.addToCart);
+router.put("/update/:itemId", cartController.updateCartItem);
+router.delete("/remove/:itemId", cartController.removeFromCart);
 router.post(
   "/apply-promo",
-  auth,
+  // auth,
   validate(promoCodeValidation),
   cartController.applyPromoCode
 );

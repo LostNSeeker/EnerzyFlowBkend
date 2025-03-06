@@ -1,0 +1,70 @@
+import Product from "../models/Product.js"; // Adjust the path to your model file
+import { faker } from "@faker-js/faker"; // Make sure to install this: npm install @faker-js/faker
+
+// Function to generate a random product ID
+const generateProductId = () => {
+  return `PRD-${faker.string.alphanumeric(8).toUpperCase()}`;
+};
+
+// Function to generate random products
+const generateProducts = (count) => {
+  const products = [];
+  const categories = ["Customize Bottles", "General Purpose", "Special Offers"];
+  
+  for (let i = 0; i < count; i++) {
+    const category = categories[Math.floor(Math.random() * categories.length)];
+    const sizeOptions = ["Small", "Medium", "Large", "XL"];
+    const randomSizes = Array.from(
+      { length: Math.floor(Math.random() * sizeOptions.length) + 1 },
+      () => sizeOptions[Math.floor(Math.random() * sizeOptions.length)]
+    );
+    // Remove duplicates from sizes
+    const sizes = [...new Set(randomSizes)];
+    
+    // Generate between 1-4 images
+    const imageCount = Math.floor(Math.random() * 4) + 1;
+    const images = Array.from({ length: imageCount }, () => faker.image.url());
+    
+    products.push({
+      productId: generateProductId(),
+      name: faker.commerce.productName(),
+      variant: Math.random() > 0.5 ? faker.commerce.productMaterial() : null,
+      price: parseFloat(faker.commerce.price({ min: 5, max: 100 })),
+      images: images,
+      category: category,
+      description: faker.commerce.productDescription(),
+      inStock: Math.random() > 0.2, // 80% chance of being in stock
+      rating: parseFloat((Math.random() * 5).toFixed(1)),
+      totalReviews: Math.floor(Math.random() * 500),
+      sizes: sizes,
+      lotSize: Math.floor(Math.random() * 12) + 1 // Random lot size between 1 and 12
+    });
+  }
+  
+  return products;
+};
+
+// Function to seed the database
+export const seedDatabase = async (count) => {
+  try {
+    console.log("inside seedDatabase")
+    // Clear existing products
+    await Product.deleteMany({});
+    console.log("Cleared existing products");
+    
+    // Generate and insert new products
+    const products = generateProducts(count);
+    await Product.insertMany(products);
+    
+    console.log(`Successfully seeded ${count} products`);
+    
+    // Display a few example products
+    const sampleProducts = await Product.find().limit(3);
+    console.log("Sample products:");
+    console.log(JSON.stringify(sampleProducts, null, 2));
+    
+    console.log("Database connection closed");
+  } catch (error) {
+    console.error("Error seeding database:", error);
+  }
+};
