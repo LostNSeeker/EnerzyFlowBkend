@@ -11,6 +11,12 @@ const userSchema = new mongoose.Schema({
     unique: true,
     trim: true,
   },
+  vendorId: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+  },
   businessName: {
     type: String,
     trim: true,

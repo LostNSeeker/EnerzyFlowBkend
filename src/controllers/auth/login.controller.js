@@ -4,14 +4,14 @@ import { validatePhoneNumber } from "../../utils/validators.js";
 export const login = async (req, res) => {
 	try {
 		const { phoneNumber, vendorId } = req.body;
-
+		
 		if (!validatePhoneNumber(phoneNumber)) {
 			return res.status(400).json({
 				success: false,
 				message: "Invalid phone number format",
 			});
 		}
-
+		// console.log(req.body)
 		await loginService(phoneNumber, vendorId);
 
 		res.status(200).json({
@@ -56,6 +56,7 @@ export const verifyOTP = async (req, res) => {
 
 export const setupProfile = async (req, res) => {
 	try {
+		console.log(req.body)
 		const { name, email } = req.body;
 
 		if (!name || !email) {

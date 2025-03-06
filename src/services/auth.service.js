@@ -1,24 +1,35 @@
 import User from "../models/User.js";
-
+import OTP from "../models/OTP.js";
 import { generateOTP, sendSMS } from "../utils/smsService.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
 export const loginService = async (phoneNumber, vendorId) => {
+	// Log all users in the database
+	// const allUsers = await User.find({});
+	// console.log("All users in database:", allUsers);
+	
 	const user = await User.findOne({ vendorId });
+	
 	if (!user) {
-		throw new Error("Invalid vendor ID");
+	  console.log("User not found for vendorId:", vendorId);
+	  throw new Error("Invalid vendor ID");
 	}
-
+	
+	console.log("User found:", user);
+	
 	const otp = generateOTP();
+	console.log("Generated OTP:", otp);
+	console.log("assosiating OTP with phone number:", phoneNumber);
 	await OTP.create({
-		phoneNumber,
-		otp: await bcrypt.hash(otp, 10),
+	  phoneNumber,
+	  otp: await bcrypt.hash(otp, 10),
 	});
-
+	console.log("sending OTP to:", phoneNumber);
 	await sendSMS(phoneNumber, `Your OTP is: ${otp}`);
+	console.log("otp sent successfully");
 	return { success: true };
-};
+  };
 
 export const verifyOTPService = async (phoneNumber, otp) => {
 	const otpRecord = await OTP.findOne({

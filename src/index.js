@@ -28,6 +28,11 @@ app.use(cors());
 app.get("/",(req,res)=>{
 	res.send("Welcome to EnerzyFlow Backend");
 })
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next(); // continue to the next middleware or route handler
+});
+
 app.use("/auth", authRoutes);
 app.use("/cart", cartRoutes);
 app.use("/order", orderRoutes);
