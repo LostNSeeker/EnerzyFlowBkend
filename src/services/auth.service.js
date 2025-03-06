@@ -3,7 +3,7 @@ import OTP from "../models/OTP.js";
 import { generateOTP, sendSMS } from "../utils/smsService.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-
+import { APP_CONSTANTS } from "../constants/app.constants.js";
 export const loginService = async (phoneNumber, vendorId) => {
 	// Log all users in the database
 	// const allUsers = await User.find({});
