@@ -5,10 +5,6 @@ export const cartValidation = [
 	check("quantity")
 		.isInt({ min: 1 })
 		.withMessage("Quantity must be at least 1"),
-	check("customization")
-		.optional()
-		.isString()
-		.withMessage("Customization must be a string"),
 ];
 
 export const promoCodeValidation = [

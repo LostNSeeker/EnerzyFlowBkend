@@ -2,14 +2,14 @@ import Cart from "../../models/Cart.js";
 
 export const addToCart = async (req, res) => {
 	try {
-		const { productId, quantity, customization } = req.body;
+		const { productId, quantity } = req.body;
 
 		let cart = await Cart.findOne({ user: req.user._id });
 
 		if (!cart) {
 			cart = await Cart.create({
 				user: req.user._id,
-				items: [{ product: productId, quantity, customization }],
+				items: [{ product: productId, quantity }],
 			});
 		} else {
 			const itemIndex = cart.items.findIndex(
@@ -18,9 +18,8 @@ export const addToCart = async (req, res) => {
 
 			if (itemIndex > -1) {
 				cart.items[itemIndex].quantity = quantity;
-				cart.items[itemIndex].customization = customization;
 			} else {
-				cart.items.push({ product: productId, quantity, customization });
+				cart.items.push({ product: productId, quantity });
 			}
 
 			await cart.save();
@@ -41,7 +40,7 @@ export const addToCart = async (req, res) => {
 
 export const getCart = async (req, res) => {
 	try {
-		const cart = await Cart.findOne({ user: req.user._id }).populate(
+		const cart = await Cart.findOne({ user: "67c6d4b293af3b4005834f2d" }).populate(
 			"items.product"
 		);
 
@@ -59,7 +58,7 @@ export const getCart = async (req, res) => {
 
 export const removeFromCart = async (req, res) => {
 	try {
-		const { productId } = req.body;
+		const { productId } = req.params;
 
 		const cart = await Cart.findOne({ user: req.user._id });
 
@@ -91,7 +90,7 @@ export const removeFromCart = async (req, res) => {
 
 export const updateCartItem = async (req, res) => {
 	try {
-		const { productId, quantity, customization } = req.body;
+		const { productId, quantity } = req.body;
 
 		const cart = await Cart.findOne({ user: req.user._id });
 
@@ -114,7 +113,6 @@ export const updateCartItem = async (req, res) => {
 		}
 
 		cart.items[itemIndex].quantity = quantity;
-		cart.items[itemIndex].customization = customization;
 
 		await cart.save();
 

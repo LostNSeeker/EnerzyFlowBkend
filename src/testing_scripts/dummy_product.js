@@ -1,10 +1,5 @@
-import Product from "../models/Product.js"; // Adjust the path to your model file
-import { faker } from "@faker-js/faker"; // Make sure to install this: npm install @faker-js/faker
-
-// Function to generate a random product ID
-const generateProductId = () => {
-  return `PRD-${faker.string.alphanumeric(8).toUpperCase()}`;
-};
+import Product from "../models/Product.js"; 
+import { faker } from "@faker-js/faker"; // npm install @faker-js/faker
 
 // Function to generate random products
 const generateProducts = (count) => {
@@ -26,7 +21,6 @@ const generateProducts = (count) => {
     const images = Array.from({ length: imageCount }, () => faker.image.url());
     
     products.push({
-      productId: generateProductId(),
       name: faker.commerce.productName(),
       variant: Math.random() > 0.5 ? faker.commerce.productMaterial() : null,
       price: parseFloat(faker.commerce.price({ min: 5, max: 100 })),

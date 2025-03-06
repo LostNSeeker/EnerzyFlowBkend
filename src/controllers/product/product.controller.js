@@ -1,3 +1,5 @@
+import Product from "../../models/Product.js";
+import Review from "../../models/Review.js";
 import {
 	getAllProducts,
 	getProductDetails,
@@ -58,7 +60,7 @@ export const getProductsDetailsByCategory = async (req, res) => {
 export const searchProducts = async (req, res) => {
 	try {
 		const { search } = req.query;
-		const products = await searchProducts(search);
+		const products = await searchProducts(search);//searchProducts is not defined
 
 		res.status(200).json({
 			success: true,
@@ -74,18 +76,25 @@ export const searchProducts = async (req, res) => {
 
 export const addReview = async (req, res) => {
 	try {
-		const { id } = req.params;
-		const { rating, review } = req.body;
-		const product = await addReview(id, rating, review);
+	  const { id } = req.params;
+	  const { rating, comment } = req.body;
+	  const userId = req.user._id;
 
-		res.status(200).json({
-			success: true,
-			data: product,
-		});
+	  const newReview = await Review.create({
+		product: id,
+		user: userId,
+		rating,
+		comment
+	  });
+	  
+	  res.status(201).json({
+		success: true,
+		data: newReview
+	  });
 	} catch (error) {
-		res.status(400).json({
-			success: false,
-			message: error.message || "Failed to add review",
-		});
+	  res.status(400).json({
+		success: false,
+		message: error.message || "Failed to add review"
+	  });
 	}
-};
+  };

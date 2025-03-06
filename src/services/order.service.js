@@ -42,7 +42,6 @@ export const updateOrderStatus = async (orderId, status) => {
 	const order = await Order.findByIdAndUpdate(
 		orderId,
 		{ orderStatus: status },
-		{ new: true }
 	);
 	return order;
 };

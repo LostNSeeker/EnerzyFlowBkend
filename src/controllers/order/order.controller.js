@@ -53,7 +53,7 @@ export const getUserOrders = async (req, res) => {
 
 export const getOrderDetails = async (req, res) => {
 	try {
-		const order = await getOrderById(req.params.id);
+		const order = await getOrderById(req.params.id);//funtion not difined
 
 		res.status(200).json({
 			success: true,
