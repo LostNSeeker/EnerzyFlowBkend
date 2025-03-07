@@ -8,14 +8,14 @@ const router = express.Router();
 
 router.post(
   "/",
-  auth,
+  
   validate(orderValidation),
   orderController.createNewOrder
 );//many fields are not included
-router.get("/", auth, orderController.getUserOrders); //use pagination
-router.get("/:id", auth, orderController.getOrderDetails); //logc not defined in function
-router.post("/:id/cancel", auth, orderController.cancelOrder);
-router.get("/ongoing", auth, orderController.getOngoingOrders);
-router.get("/completed", auth, orderController.getCompletedOrders);
+router.get("/",  orderController.getUserOrders); //use pagination
+router.get("/ongoing",  orderController.getOngoingOrders);
+router.get("/completed",  orderController.getCompletedOrders);
+router.get("/:id",  orderController.getOrderDetails); //logc not defined in function
+router.post("/:id/cancel",  orderController.cancelOrder);
 
 export default router;

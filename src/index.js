@@ -13,6 +13,8 @@ import paymentRoutes from "./routes/payment.routes.js";
 import productRoutes from "./routes/product.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import { seedDatabase } from "./testing_scripts/dummy_product.js";
+import { clearAndSeedOrders, seedOrders } from "./testing_scripts/dummy_orders.js";
+import { seedUsers } from "./testing_scripts/dummy_users.js";
 
 // Initialize environment variables
 dotenv.config();
@@ -41,9 +43,17 @@ app.use("/payment", paymentRoutes);
 app.use("/product", productRoutes);
 app.use("/user", userRoutes);
 
+app.use("/dummyUsers",async (req, res )=>{
+	await seedUsers(10)
+	res.send("Dummy users Added")
+});
 app.use("/dummyProducts",async (req, res )=>{
 	await seedDatabase(10)
 	res.send("Dummy Products Added")
+});
+app.use("/dummyOrders",async (req, res )=>{
+	await seedOrders(10)
+	res.send("Dummy orders Added")
 });
 
 const PORT = Number(process.env.PORT) || 3000;

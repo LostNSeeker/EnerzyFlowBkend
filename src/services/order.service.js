@@ -31,11 +31,33 @@ export const createOrder = async (userId, orderData) => {
 
 	return order;
 };
+export const getOrderById = async (id) => {
+	try {
 
+	  // Look up the order by _id (MongoDB ObjectId)
+	  const order = await Order.findById(id)
+		.populate('items.product', 'name price images category')
+		.exec();
+  
+	  if (!order) {
+		throw new Error(`Order with ID ${id} not found`);
+	  }
+  
+	  return order;
+	} catch (error) {
+	  console.error(`Error in getOrderById: ${error.message}`);
+	  throw error;
+	}
+  };
 export const getOrders = async (userId, status) => {
-	const query = { user: userId };
-	if (status) query.orderStatus = status;
-	return Order.find(query).sort({ createdAt: -1 });
+	console.log("getOrders called");
+	if (status==="ongoing") {
+		return Order.find({ user: userId, orderStatus: { $nin: ["delivered", "cancelled"] } }).sort({ createdAt: -1 });
+	}
+	if (status==="completed") {
+		return Order.find({ user: userId, orderStatus: "delivered" }).sort({ createdAt: -1 });
+	}
+	return Order.find({ user: userId }).sort({ createdAt: -1 });
 };
 
 export const updateOrderStatus = async (orderId, status) => {

@@ -1,5 +1,6 @@
 import {
 	createOrder,
+	getOrderById,
 	getOrders,
 	updateOrderStatus,
 } from "../../services/order.service.js";
@@ -85,8 +86,9 @@ export const cancelOrder = async (req, res) => {
 };
 
 export const getOngoingOrders = async (req, res) => {
+	console.log("getongoingorders called");
 	try {
-		const orders = await getOrders(req.user._id, "ongoing");
+		const orders = await getOrders("67c6d4b293af3b4005834f2d", "ongoing");//req.user._id
 
 		res.status(200).json({
 			success: true,
@@ -102,7 +104,7 @@ export const getOngoingOrders = async (req, res) => {
 
 export const getCompletedOrders = async (req, res) => {
 	try {
-		const orders = await getOrders(req.user._id, "completed");
+		const orders = await getOrders("67c6d4b293af3b4005834f2d", "completed");//req.user._id
 
 		res.status(200).json({
 			success: true,

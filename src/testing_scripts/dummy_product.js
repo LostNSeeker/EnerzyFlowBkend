@@ -1,4 +1,4 @@
-import Product from "../models/Product.js"; 
+import Product from "../models/Product.js";
 import { faker } from "@faker-js/faker"; // npm install @faker-js/faker
 
 // Function to generate random products
@@ -13,6 +13,7 @@ const generateProducts = (count) => {
       { length: Math.floor(Math.random() * sizeOptions.length) + 1 },
       () => sizeOptions[Math.floor(Math.random() * sizeOptions.length)]
     );
+    
     // Remove duplicates from sizes
     const sizes = [...new Set(randomSizes)];
     
@@ -21,6 +22,7 @@ const generateProducts = (count) => {
     const images = Array.from({ length: imageCount }, () => faker.image.url());
     
     products.push({
+      productId: faker.string.uuid(), // Add a unique productId
       name: faker.commerce.productName(),
       variant: Math.random() > 0.5 ? faker.commerce.productMaterial() : null,
       price: parseFloat(faker.commerce.price({ min: 5, max: 100 })),
@@ -41,10 +43,7 @@ const generateProducts = (count) => {
 // Function to seed the database
 export const seedDatabase = async (count) => {
   try {
-    console.log("inside seedDatabase")
-    // Clear existing products
-    await Product.deleteMany({});
-    console.log("Cleared existing products");
+    console.log("Starting database seeding process");
     
     // Generate and insert new products
     const products = generateProducts(count);
@@ -57,8 +56,26 @@ export const seedDatabase = async (count) => {
     console.log("Sample products:");
     console.log(JSON.stringify(sampleProducts, null, 2));
     
-    console.log("Database connection closed");
   } catch (error) {
     console.error("Error seeding database:", error);
+    // For debugging, log more details about the error
+    if (error.writeErrors) {
+      console.error("Write errors:", error.writeErrors);
+    }
+  }
+};
+
+// Optional: If you want to clear existing products before seeding
+export const clearAndSeedDatabase = async (count) => {
+  try {
+    console.log("Clearing existing products");
+    await Product.deleteMany({});
+    console.log("Cleared existing products");
+    
+    // Now seed with new products
+    await seedDatabase(count);
+    
+  } catch (error) {
+    console.error("Error in clear and seed operation:", error);
   }
 };
