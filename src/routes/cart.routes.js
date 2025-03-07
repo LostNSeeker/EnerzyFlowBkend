@@ -22,12 +22,12 @@ router.post(
   cartController.addToCart
 );
 router.put(
-  "/update",
+  "/update/:id",
   // auth,
   upload.none(), // to parse multipart form data
   cartController.updateCartItem
 );
-router.delete("/remove/:productId",
+router.delete("/remove/:id",
   //  auth,
     cartController.removeFromCart);
 router.post(

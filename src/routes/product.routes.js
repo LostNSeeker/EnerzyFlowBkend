@@ -10,6 +10,7 @@ const upload = multer();
 const router = express.Router();
 
 router.get("/", cache(300), productController.getProducts);
+router.get("/search", productController.searchProducts);//not emplimented till now
 router.get(
 	"/category/:category",
 	cache(300),
@@ -23,6 +24,5 @@ router.post(
 	validate(reviewValidation),
 	productController.addReview
 );
-router.get("/search", productController.searchProducts);//not emplimented till now
 
 export default router;

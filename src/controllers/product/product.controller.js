@@ -59,9 +59,13 @@ export const getProductsDetailsByCategory = async (req, res) => {
 
 export const searchProducts = async (req, res) => {
 	try {
+		console.log("inside searchProducts");
+		console.log(req.body);
+		console.log(req.query);
+		console.log(req.params);
 		const { search } = req.query;
-		const products = await searchProducts(search);//searchProducts is not defined
-
+		// const products = await searchProducts(search);//searchProducts is not defined
+		const products ="search functionality currently not available";
 		res.status(200).json({
 			success: true,
 			data: products,

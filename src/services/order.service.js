@@ -50,7 +50,6 @@ export const getOrderById = async (id) => {
 	}
   };
 export const getOrders = async (userId, status) => {
-	console.log("getOrders called");
 	if (status==="ongoing") {
 		return Order.find({ user: userId, orderStatus: { $nin: ["delivered", "cancelled"] } }).sort({ createdAt: -1 });
 	}

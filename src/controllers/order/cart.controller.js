@@ -58,10 +58,10 @@ export const getCart = async (req, res) => {
 
 export const removeFromCart = async (req, res) => {
 	try {
-		const { productId } = req.params;
-
-		const cart = await Cart.findOne({ user: req.user._id });
-
+		const { id } = req.params;
+		const cart = await Cart.findOne({ user: "67c6d4b293af3b4005834f2d" }).populate(//user : req.user._id
+			"items.product"
+		);
 		if (!cart) {
 			return res.status(400).json({
 				success: false,
@@ -70,7 +70,7 @@ export const removeFromCart = async (req, res) => {
 		}
 
 		cart.items = cart.items.filter(
-			(item) => item.product.toString() !== productId
+			(item) => item.product._id.toString() !== id
 		);
 
 		await cart.save();
@@ -90,10 +90,12 @@ export const removeFromCart = async (req, res) => {
 
 export const updateCartItem = async (req, res) => {
 	try {
-		const { productId, quantity } = req.body;
+		const { quantity } = req.body;
+		const { id } = req.params;
 
-		const cart = await Cart.findOne({ user: req.user._id });
-
+		const cart = await Cart.findOne({ user: "67c6d4b293af3b4005834f2d" }).populate(//user : req.user._id
+			"items.product"
+		);
 		if (!cart) {
 			return res.status(400).json({
 				success: false,
@@ -102,7 +104,7 @@ export const updateCartItem = async (req, res) => {
 		}
 
 		const itemIndex = cart.items.findIndex(
-			(item) => item.product.toString() === productId
+			(item) => item.product._id.toString() === id
 		);
 
 		if (itemIndex === -1) {

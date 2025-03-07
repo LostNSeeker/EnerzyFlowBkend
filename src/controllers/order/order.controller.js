@@ -86,7 +86,6 @@ export const cancelOrder = async (req, res) => {
 };
 
 export const getOngoingOrders = async (req, res) => {
-	console.log("getongoingorders called");
 	try {
 		const orders = await getOrders("67c6d4b293af3b4005834f2d", "ongoing");//req.user._id
 
