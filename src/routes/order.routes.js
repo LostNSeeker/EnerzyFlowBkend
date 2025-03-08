@@ -12,10 +12,10 @@ router.post(
   validate(orderValidation),
   orderController.createNewOrder
 );//many fields are not included
-router.get("/",  orderController.getUserOrders); //use pagination
+router.get("/",  orderController.getUserOrders); //use pagination!!!
 router.get("/ongoing",  orderController.getOngoingOrders);
 router.get("/completed",  orderController.getCompletedOrders);
-router.get("/:id",  orderController.getOrderDetails); //logc not defined in function
+router.get("/:id",  orderController.getOrderDetails);
 router.post("/:id/cancel",  orderController.cancelOrder);
 
 export default router;

@@ -3,6 +3,7 @@ import {
 	processPayment,
 } from "../../services/payment.service.js";
 import { sendOrderConfirmation } from "../../services/notification.service.js";
+import Order from "../../models/Order.js";
 
 export const initiatePayment = async (req, res) => {
 	try {
@@ -50,16 +51,39 @@ export const verifyPayment = async (req, res) => {
 
 export const confirmCashOnDelivery = async (req, res) => {
 	try {
-		const { orderId } = req.body;
+		const _id = req.body.orderId;
+		if (!_id) {
+		  return res.status(400).json({ 
+			success: false, 
+			message: "Order ID is required" 
+		  });
+		}
+	
+		const order = await Order.findById(_id);
+	
+		if (!order) {
+		  return res.status(404).json({ 
+			success: false, 
+			message: "Order not found" 
+		  });
+		}
+	
+		if (order.paymentMethod !== "cash") {
+		  return res.status(400).json({ 
+			success: false, 
+			message: "This function is only for cash on delivery orders" 
+		  });
+		}
+	
+		order.orderStatus = "confirmed";
+		await order.save();
 
-		const order = await processPayment(orderId);
-
-		// Send confirmation
-		await sendOrderConfirmation(
-			req.user.phoneNumber,
-			order._id,
-			order.totalAmount
-		);
+		// Send confirmation	//testing
+		// await sendOrderConfirmation(
+		// 	req.user.phoneNumber,
+		// 	order._id,
+		// 	order.totalAmount
+		// );
 
 		res.status(200).json({
 			success: true,

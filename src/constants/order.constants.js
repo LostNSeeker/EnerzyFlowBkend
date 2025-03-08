@@ -15,6 +15,6 @@ export const ORDER_STATUS = {
   
   export const PAYMENT_METHODS = {
     CASH: 'cash',
-    GOOGLEPAY: 'googlepay'
+    UPI: 'upi',
   };
   

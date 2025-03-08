@@ -2,12 +2,22 @@ import Order from "../models/Order.js";
 import Cart from "../models/Cart.js";
 import { createPaymentOrder } from "../utils/paymentUtils.js";
 
+const calculateTotalAmount = (items) => {
+	return items.reduce((total, item) => {
+	  if (item.product && typeof item.product === 'object' && item.product.price) {
+		return total + (item.quantity * item.product.price);
+	  }
+	  return total;
+	}, 0);
+  };
+
 export const createOrder = async (userId, orderData) => {
 	const cart = await Cart.findOne({ user: userId }).populate("items.product");
 	if (!cart || cart.items.length === 0) {
 		throw new Error("Cart is empty");
 	}
-
+	console.log("cart",cart);
+	console.log("total ammount",calculateTotalAmount(cart.items));
 	const order = new Order({
 		user: userId,
 		items: cart.items.map((item) => ({
@@ -16,25 +26,20 @@ export const createOrder = async (userId, orderData) => {
 			price: item.product.price,
 			customization: item.customization,
 		})),
-		totalAmount: orderData.totalAmount,
+		totalAmount: calculateTotalAmount(cart.items),
 		shippingAddress: orderData.shippingAddress,
 		paymentMethod: orderData.paymentMethod,
 	});
-
-	if (orderData.paymentMethod === "googlepay") {
+	if (orderData.paymentMethod === "upi") {
 		const paymentOrder = await createPaymentOrder(order.totalAmount, order._id);
 		order.razorpayOrderId = paymentOrder.id;
 	}
-
 	await order.save();
 	await Cart.findOneAndDelete({ user: userId });
-
 	return order;
 };
 export const getOrderById = async (id) => {
 	try {
-
-	  // Look up the order by _id (MongoDB ObjectId)
 	  const order = await Order.findById(id)
 		.populate('items.product', 'name price images category')
 		.exec();

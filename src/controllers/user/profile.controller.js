@@ -3,7 +3,6 @@ import User from "../../models/User.js";
 export const getUserProfile = async (req, res) => {
 	try {
 		const user = await User.findById("67cac2e3d43686869ff88f46").select("-__v");//req.user._id
-
 		res.status(200).json({
 			success: true,
 			data: user,

@@ -7,7 +7,9 @@ const orderSchema = new mongoose.Schema({
 	},
 	orderId: {
 		type: String,
-		required: true,
+		default: function() {
+			return `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+		  },
 	},
 	items: [
 		{
@@ -25,7 +27,9 @@ const orderSchema = new mongoose.Schema({
 				type: Number,
 				required: true,
 			},
-			
+			customization: {
+				type: String
+			}
 		},
 	],
 	totalAmount: {

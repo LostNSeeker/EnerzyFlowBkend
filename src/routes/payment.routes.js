@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.post("/create-order", auth, paymentController.initiatePayment);
 router.post("/verify", auth, paymentController.verifyPayment);
-router.post("/cod-confirm", auth, paymentController.confirmCashOnDelivery);
+router.post("/cod-confirm", paymentController.confirmCashOnDelivery);
 
 export default router;

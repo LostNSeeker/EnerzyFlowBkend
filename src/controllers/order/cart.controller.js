@@ -4,11 +4,11 @@ export const addToCart = async (req, res) => {
 	try {
 		const { productId, quantity } = req.body;
 
-		let cart = await Cart.findOne({ user: "67c6d4b293af3b4005834f2d" });//user : req.user._id
+		let cart = await Cart.findOne({ user: "67cac2e3d43686869ff88f46" });//user : req.user._id
 
 		if (!cart) {
 			cart = await Cart.create({
-				user: "67c6d4b293af3b4005834f2d",//user : req.user._id
+				user: "67cac2e3d43686869ff88f46",//user : req.user._id
 				items: [{ product: productId, quantity }],
 			});
 		} else {
@@ -40,7 +40,7 @@ export const addToCart = async (req, res) => {
 
 export const getCart = async (req, res) => {
 	try {
-		const cart = await Cart.findOne({ user: "67c6d4b293af3b4005834f2d" }).populate(//user : req.user._id
+		const cart = await Cart.findOne({ user: "67cac2e3d43686869ff88f46" }).populate(//user : req.user._id
 			"items.product"
 		);
 
@@ -59,7 +59,7 @@ export const getCart = async (req, res) => {
 export const removeFromCart = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const cart = await Cart.findOne({ user: "67c6d4b293af3b4005834f2d" }).populate(//user : req.user._id
+		const cart = await Cart.findOne({ user: "67cac2e3d43686869ff88f46" }).populate(//user : req.user._id
 			"items.product"
 		);
 		if (!cart) {
@@ -93,7 +93,7 @@ export const updateCartItem = async (req, res) => {
 		const { quantity } = req.body;
 		const { id } = req.params;
 
-		const cart = await Cart.findOne({ user: "67c6d4b293af3b4005834f2d" }).populate(//user : req.user._id
+		const cart = await Cart.findOne({ user: "67cac2e3d43686869ff88f46" }).populate(//user : req.user._id
 			"items.product"
 		);
 		if (!cart) {
