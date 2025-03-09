@@ -29,12 +29,12 @@ export const verifyPayment = async (req, res) => {
 
 		const order = await processPayment(orderId, paymentId, signature);
 
-		// Send confirmation
-		await sendOrderConfirmation(
-			req.user.phoneNumber,
-			order._id,
-			order.totalAmount
-		);
+		// Send confirmation	//testing
+		// await sendOrderConfirmation(
+		// 	req.user.phoneNumber,
+		// 	order._id,
+		// 	order.totalAmount
+		// );
 
 		res.status(200).json({
 			success: true,
@@ -67,7 +67,7 @@ export const confirmCashOnDelivery = async (req, res) => {
 			message: "Order not found" 
 		  });
 		}
-	
+
 		if (order.paymentMethod !== "cash") {
 		  return res.status(400).json({ 
 			success: false, 

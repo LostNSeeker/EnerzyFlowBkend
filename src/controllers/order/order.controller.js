@@ -9,7 +9,6 @@ import { sendOrderConfirmation } from "../../services/notification.service.js";
 export const createNewOrder = async (req, res) => {
 	try {
 		const { shippingAddress, paymentMethod } = req.body;
-		console.log("order creating");
 
 		const order = await createOrder("67cac2e3d43686869ff88f46", {//req.user._id
 			shippingAddress,

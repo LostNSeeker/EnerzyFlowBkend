@@ -16,8 +16,6 @@ export const createOrder = async (userId, orderData) => {
 	if (!cart || cart.items.length === 0) {
 		throw new Error("Cart is empty");
 	}
-	console.log("cart",cart);
-	console.log("total ammount",calculateTotalAmount(cart.items));
 	const order = new Order({
 		user: userId,
 		items: cart.items.map((item) => ({
