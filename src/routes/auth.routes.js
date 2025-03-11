@@ -9,18 +9,19 @@ import {
 	profileValidation,
 } from "../validators/auth.validators.js";
 import { upload } from "../middleware/upload.js";
+
 const router = express.Router();
 
 router.post(
 	"/login",
-	// authLimiter,
+	authLimiter,
 	validate(loginValidation),
 	authController.login
 );
 router.post("/verify-otp", validate(otpValidation), authController.verifyOTP);
 router.post(
 	"/profile-setup",
-	auth,
+	upload.single("document"),
 	validate(profileValidation),
 	authController.setupProfile
 );

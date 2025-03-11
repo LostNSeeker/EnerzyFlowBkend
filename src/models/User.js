@@ -35,15 +35,15 @@ const userSchema = new mongoose.Schema({
 
   kycStatus: {
     type: String,
-    enum: ["pending", "verified", "rejected"],
+    enum: ["kyc_pending", "verified", "rejected"],
     default: "pending",
   },
 
   kycDocument: {
-    uri: { type: String, required: true },  // URL of the uploaded document
-    name: { type: String, required: true }, // Original file name
-    mimeType: { type: String, required: true }, // File type (image/pdf)
-    size: { type: Number, required: true },  // File size in bytes
+    uri: { type: String },  // URL of the uploaded document
+    name: { type: String}, // Original file name
+    mimeType: { type: String}, // File type (image/pdf)
+    size: { type: Number},  // File size in bytes
   },
 
   coins: {

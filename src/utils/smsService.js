@@ -1,7 +1,7 @@
 import twilio from 'twilio';
 
 export const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return Math.floor(999 + Math.random() * 9000).toString();
 };
 
 export const sendSMS = async (to, message) => {
@@ -18,13 +18,13 @@ export const sendSMS = async (to, message) => {
         note: 'SMS not actually sent - development mode'
       };
     }
-    
+    console.log("Initialize Twilio client")
     // Initialize Twilio client
     const client = twilio(
       process.env.TWILIO_ACCOUNT_SID,
       process.env.TWILIO_AUTH_TOKEN
     );
-    
+    console.log("twilio object created")
     // Send the actual SMS
     const response = await client.messages.create({
       body: message,
