@@ -12,27 +12,27 @@ const upload = multer();
 const router = express.Router();
 
 router.get("/", 
-  // auth,
+  auth,
    cartController.getCart);
 router.post(
   "/add",
-  // auth,
+  auth,
   upload.none(), // to parse multipart form data
   validate(cartValidation),
   cartController.addToCart
 );
 router.put(
   "/update/:id",
-  // auth,
+  auth,
   upload.none(), // to parse multipart form data
   cartController.updateCartItem
 );
 router.delete("/remove/:id",
-  //  auth,
+   auth,
     cartController.removeFromCart);
 router.post(
   "/apply-promo",
-  // auth,
+  auth,
   upload.none(),
   validate(promoCodeValidation),
   cartController.applyPromoCode

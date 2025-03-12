@@ -2,7 +2,7 @@ import User from "../../models/User.js";
 
 export const getUserProfile = async (req, res) => {
 	try {
-		const user = await User.findById("67cac2e3d43686869ff88f46").select("-__v");//req.user._id
+		const user = await User.findById(req.user._id).select("-__v");
 		res.status(200).json({
 			success: true,
 			data: user,
@@ -20,7 +20,7 @@ export const updateUserProfile = async (req, res) => {
 		const { businessName,businessType, businessAddress, city, state, pinCode } = req.body;
 
 		const user = await User.findByIdAndUpdate(
-			"67cac2e3d43686869ff88f46",//req.user._id
+			req.user._id,
 			{
 				businessName,
 				businessType,

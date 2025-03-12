@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post(
   "/",
-  
+  auth,
   validate(orderValidation),
   orderController.createNewOrder
 );//many fields are not included

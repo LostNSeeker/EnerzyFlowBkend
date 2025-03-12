@@ -1,5 +1,11 @@
 import { loginService, verifyOTPService } from "../../services/auth.service.js";
 import { validatePhoneNumber } from "../../utils/validators.js";
+import User from "../../models/User.js";
+import {
+  generateVendorId,
+  generateUniqueReferralCode,
+} from "../../utils/user_profile_utils.js";
+import fs from "fs";
 
 export const login = async (req, res) => {
   try {
@@ -55,13 +61,6 @@ export const verifyOTP = async (req, res) => {
     });
   }
 };
-
-import User from "../../models/User.js";
-import {
-  generateVendorId,
-  generateUniqueReferralCode,
-} from "../../utils/user_profile_utils.js";
-import fs from "fs";
 
 export const setupProfile = async (req, res) => {
   try {
@@ -135,12 +134,21 @@ export const setupProfile = async (req, res) => {
       existingUser.referralCode = userReferralCode;
 
       // Check if there's a valid referral code
-      if (referralCode) {
+      // Updated referral code section for the existing user branch
+      if (referralCode && !existingUser.referredBy) {
         const referrer = await User.findOne({ referralCode });
-        if (referrer) {
+        if (referrer ) {
           existingUser.referredBy = referrer._id;
-          // Award coins to the referrer here if needed
-          console.log("refral award here, logic not implemented");
+          // Award 100 coins to both the referrer and the referred user
+          existingUser.refralWalletAmount += 100;
+          referrer.refralWalletAmount += 100;
+          // Add the new user to the referrer's referredTo list
+          referrer.referredTo.push(existingUser._id);
+          // Increment the referral count for the referrer
+          referrer.referralCount += 1;
+
+          await referrer.save();
+          console.log("Referral reward added: 100 coins to both users");
         }
       }
 
@@ -174,13 +182,19 @@ export const setupProfile = async (req, res) => {
         referralCode: userReferralCode,
       });
 
-      // Check if there's a valid referral code
       if (referralCode) {
         const referrer = await User.findOne({ referralCode });
         if (referrer) {
           newUser.referredBy = referrer._id;
-          // Award coins to the referrer here if needed
-          console.log("refral award here, logic not implemented");
+          // Award 100 coins to both the referrer and the referred user
+          newUser.refralWalletAmount += 100;
+          referrer.refralWalletAmount += 100;
+          // Add the new user to the referrer's referredTo list
+          referrer.referredTo.push(newUser._id);
+          // Increment the referral count for the referrer
+          referrer.referralCount += 1;
+          await referrer.save();
+          console.log("Referral reward added: 100 coins to both users");
         }
       }
 
@@ -214,31 +228,6 @@ export const setupProfile = async (req, res) => {
       success: false,
       message: "An error occurred while setting up profile",
       error: error.message,
-    });
-  }
-};
-
-export const uploadKYC = async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        message: "KYC document is required",
-      });
-    }
-
-    req.user.kyc = req.file.filename;
-    await req.user.save();
-
-    res.status(200).json({
-      success: true,
-      message: "KYC document uploaded successfully",
-      user: req.user,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message || "KYC upload failed",
     });
   }
 };

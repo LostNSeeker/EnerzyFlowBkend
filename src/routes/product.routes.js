@@ -9,14 +9,15 @@ const upload = multer();
 
 const router = express.Router();
 
-router.get("/", cache(300), productController.getProducts);
+router.get("/",auth, cache(300), productController.getProducts);
 router.get("/search", productController.searchProducts);//not emplimented till now
 router.get(
 	"/category/:category",
+	auth,
 	cache(300),
 	productController.getProductsDetailsByCategory
 );
-router.get("/:id", productController.getProductById);
+router.get("/:id",auth, productController.getProductById);
 router.post(
 	"/:id/review",
 	auth,

@@ -8,17 +8,18 @@ import { getFAQsGroupedByCategory } from "../controllers/user/faqs.js";
 
 const router = express.Router();
 
-router.get("/profile", userController.getUserProfile);
+router.get("/profile",auth, userController.getUserProfile);
 router.put(
 	"/profile",
+	auth,
 	validate(profileValidation),
 	userController.updateUserProfile
 );
-router.get("/settings", getUserSettings);
-router.patch("/settings", updateUserSettings);
-router.get("/faqs/grouped", getFAQsGroupedByCategory);
-router.get("/coins", auth, userController.getCoinsBalance);
-router.post("/refer", auth, userController.referFriend);
-router.get("/referrals", auth, userController.getReferralHistory);
+router.get("/settings",auth, getUserSettings);
+router.patch("/settings",auth, updateUserSettings);
+router.get("/faqs/grouped",auth, getFAQsGroupedByCategory);
+// router.get("/coins", auth, userController.getCoinsBalance);
+// router.post("/refer", auth, userController.referFriend);
+// router.get("/referrals", auth, userController.getReferralHistory);
 
 export default router;

@@ -3,7 +3,7 @@ import UserSettings from '../../models/UserSettings.js';
 
 export const getUserSettings = async (req, res) => {
   try {
-    const { userId } = req.user || { userId: "60d21b4667d0d8992e610c85" }; // Ideally get from auth middleware
+    const userId  = req.user._id
     
     // Validate userId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -32,7 +32,7 @@ export const getUserSettings = async (req, res) => {
 
 export const updateUserSettings = async (req, res) => {
   try {
-    const { userId } = req.user || { userId: "60d21b4667d0d8992e610c85" }; // Ideally get from auth middleware
+    const  userId  = req.user._id 
     const updatedSettings = req.body;
     
     // Validate userId

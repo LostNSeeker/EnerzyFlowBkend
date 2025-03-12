@@ -57,10 +57,25 @@ const userSchema = new mongoose.Schema({
   },
 
   referredBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    type: String,
   },
-
+  refralWalletAmount: {
+    type: Number,
+    default: 0,
+  },
+  referralCount: {
+    type: Number,
+    default: 0,
+  },
+  referredTo: {
+    type: [{ type: String }],
+    default: [],
+  },
+  coupenUsed: {
+    type: [{ type: String }],
+    default: [],
+  },
+  
   isActive: {
     type: Boolean,
     default: true,

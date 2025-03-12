@@ -12,11 +12,6 @@ import orderRoutes from "./routes/order.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
 import productRoutes from "./routes/product.routes.js";
 import userRoutes from "./routes/user.routes.js";
-import { seedDatabase } from "./testing_scripts/dummy_product.js";
-import { clearAndSeedOrders, seedOrders } from "./testing_scripts/dummy_orders.js";
-import { seedUsers } from "./testing_scripts/dummy_users.js";
-import createDummySettings from "./testing_scripts/dummy_settings.js";
-import seedFaq from "./testing_scripts/seed_faqs.js";
 
 // Initialize environment variables
 dotenv.config();
@@ -35,36 +30,36 @@ app.get("/",(req,res)=>{
 })
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next(); // continue to the next middleware or route handler
+  next();
 });
 
 app.use("/auth", authRoutes);
+app.use("/user", userRoutes);
+app.use("/product", productRoutes);
 app.use("/cart", cartRoutes);
 app.use("/order", orderRoutes);
 app.use("/payment", paymentRoutes);
-app.use("/product", productRoutes);
-app.use("/user", userRoutes);
 
-app.use("/dummyUsers",async (req, res )=>{
-	await seedUsers(10)
-	res.send("Dummy users Added")
-});
-app.use("/dummyProducts",async (req, res )=>{
-	await seedDatabase(10)
-	res.send("Dummy Products Added")
-});
-app.use("/dummyOrders",async (req, res )=>{
-	await seedOrders(10)
-	res.send("Dummy orders Added")
-});
-app.use("/createDummySettings",async (req, res )=>{
-	await createDummySettings("60d21b4667d0d8992e610c85")
-	res.send("Dummy settings created")
-});
-app.use("/seedFaq",async (req, res )=>{
-	await seedFaq()
-	res.send("seedFaq created")
-});
+// app.use("/dummyUsers",async (req, res )=>{
+// 	await seedUsers(10)
+// 	res.send("Dummy users Added")
+// });
+// app.use("/dummyProducts",async (req, res )=>{
+// 	await seedDatabase(10)
+// 	res.send("Dummy Products Added")
+// });
+// app.use("/dummyOrders",async (req, res )=>{
+// 	await seedOrders(10)
+// 	res.send("Dummy orders Added")
+// });
+// app.use("/createDummySettings",async (req, res )=>{
+// 	await createDummySettings("60d21b4667d0d8992e610c85")
+// 	res.send("Dummy settings created")
+// });
+// app.use("/seedFaq",async (req, res )=>{
+// 	await seedFaq()
+// 	res.send("seedFaq created")
+// });
 
 const PORT = Number(process.env.PORT) || 3000;
 

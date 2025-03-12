@@ -4,8 +4,8 @@ import * as paymentController from "../controllers/order/payment.controller.js";
 
 const router = express.Router();
 
-router.post("/create-order", paymentController.initiatePayment);
+router.post("/create-order",auth, paymentController.initiatePayment);
 router.post("/verify", auth, paymentController.verifyPayment);
-router.post("/cod-confirm", paymentController.confirmCashOnDelivery);
+router.post("/cod-confirm",auth, paymentController.confirmCashOnDelivery);
 
 export default router;
