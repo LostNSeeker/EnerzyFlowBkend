@@ -1,5 +1,5 @@
 import Cart from "../../models/Cart.js";
-import Coupon from "../../models/Coupern.js";
+import Coupon from "../../models/Coupon.js";
 import User from "../../models/User.js";
 import { calculateTotalAmount } from "../../services/order.service.js";
 

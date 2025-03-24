@@ -30,6 +30,7 @@ export const getAllProducts = async (query) => {
 
 export const getProductDetails = async (productId) => {
 	const product = await Product.findById(productId);
+	console.log("product in getProductDetails", product)
 	if (!product) {
 		throw new Error("Product not found");
 	}

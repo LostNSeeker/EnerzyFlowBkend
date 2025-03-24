@@ -6,7 +6,7 @@ import {
 	updateOrderStatus,
 } from "../../services/order.service.js";
 import { sendOrderConfirmation } from "../../services/notification.service.js";
-import Coupon from "../../models/Coupern.js";
+import Coupon from "../../models/Coupon.js";
 import Cart from "../../models/Cart.js";
 import User from "../../models/User.js";
 

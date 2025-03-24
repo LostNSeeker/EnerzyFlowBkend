@@ -5,6 +5,7 @@ import { validate } from "../middleware/validation.js";
 import { profileValidation } from "../validators/user.validators.js";
 import { getUserSettings, updateUserSettings } from "../controllers/user/settingsController.js";
 import { getFAQsGroupedByCategory } from "../controllers/user/faqs.js";
+import { getActiveCoupons } from "../controllers/user/CoupenController.js";
 
 const router = express.Router();
 
@@ -18,6 +19,7 @@ router.put(
 router.get("/settings",auth, getUserSettings);
 router.patch("/settings",auth, updateUserSettings);
 router.get("/faqs/grouped",auth, getFAQsGroupedByCategory);
+router.get('/coupons',auth, getActiveCoupons);
 // router.get("/coins", auth, userController.getCoinsBalance);
 // router.post("/refer", auth, userController.referFriend);
 // router.get("/referrals", auth, userController.getReferralHistory);

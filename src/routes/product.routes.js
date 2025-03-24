@@ -14,7 +14,7 @@ router.get("/search", productController.searchProducts);//not emplimented till n
 router.get(
 	"/category/:category",
 	auth,
-	cache(300),
+	// cache(300),
 	productController.getProductsDetailsByCategory
 );
 router.get("/:id",auth, productController.getProductById);

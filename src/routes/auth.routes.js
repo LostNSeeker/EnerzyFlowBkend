@@ -30,7 +30,7 @@ router.post(
 router.post("/verify-otp", validate(otpValidation), authController.verifyOTP);
 router.post(
   "/profile-setup",
-  upload.single("document"),
+  upload.none(),
   validate(profileValidation),
   authController.setupProfile
 );

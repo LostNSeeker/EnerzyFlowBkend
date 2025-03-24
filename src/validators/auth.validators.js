@@ -15,36 +15,31 @@ export const profileValidation = [
   check("name")
     .notEmpty().withMessage("Name is required")
     .trim(),
-  
   check("phoneNumber")
     .notEmpty().withMessage("Phone number is required")
     .trim()
-    .isLength({ min: 10, max: 15 }).withMessage("Phone number must be between 10 and 15 characters"),
-  
+    .isLength({ min: 10, max: 10 }).withMessage("Phone number must be exactly 10 digits")
+    .isNumeric().withMessage("Phone number must contain only digits"),
   check("businessName")
     .notEmpty().withMessage("Business name is required")
     .trim(),
-  
   check("businessType")
     .notEmpty().withMessage("Business type is required")
     .trim(),
-  
   check("businessAddress")
     .notEmpty().withMessage("Business address is required")
     .trim(),
-  
   check("city")
     .notEmpty().withMessage("City is required")
     .trim(),
-  
   check("pinCode")
     .notEmpty().withMessage("PIN code is required")
-    .trim(),
-  
+    .trim()
+    .isLength({ min: 6, max: 6 }).withMessage("PIN code must be exactly 6 digits")
+    .isNumeric().withMessage("PIN code must contain only digits"),
   check("state")
     .notEmpty().withMessage("State is required")
     .trim(),
-  
   check("kycDocName")
     .notEmpty().withMessage("KYC document name is required")
     .trim(),

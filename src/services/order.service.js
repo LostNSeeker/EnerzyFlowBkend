@@ -1,7 +1,7 @@
 import Order from "../models/Order.js";
 import Cart from "../models/Cart.js";
 import { createPaymentOrder } from "../utils/paymentUtils.js";
-import Coupon from "../models/Coupern.js";
+import Coupon from "../models/Coupon.js";
 import User from "../models/User.js";
 import mongoose from "mongoose";
 

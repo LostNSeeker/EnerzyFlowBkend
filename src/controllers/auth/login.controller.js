@@ -6,6 +6,7 @@ import {
   generateUniqueReferralCode,
 } from "../../utils/user_profile_utils.js";
 import fs from "fs";
+import { saveFile } from "../../middleware/upload.js";
 
 export const login = async (req, res) => {
   try {
@@ -46,11 +47,11 @@ export const verifyOTP = async (req, res) => {
       });
     }
 
-    const { token, user } = await verifyOTPService(phoneNumber, otp);
+    const { token, user,success,message } = await verifyOTPService(phoneNumber, otp);
 
     res.status(200).json({
-      success: true,
-      message: "OTP verified successfully",
+      success: success,
+      message: message,
       token,
       user,
     });
@@ -75,154 +76,80 @@ export const setupProfile = async (req, res) => {
       state,
       kycDocName,
       referralCode,
-      document,
+      image,
     } = req.body;
 
-    console.log("body", req.body);
-    console.log(
-      "two funtioin calling",
-      generateVendorId(),
-      generateUniqueReferralCode(name)
-    );
-
-    // Check if file was uploaded
-    // if (!req.file) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "KYC document is required",
-    //   });
-    // }
+    const documentData = await saveFile(image);
+    if (!documentData) {
+      return res.status(400).json({
+        success: false,
+        message: "KYC document saving error",
+      });
+    }
 
     // Check if user already exists with this phone number
     const existingUser = await User.findOne({ phoneNumber });
     if (existingUser) {
-      // Delete the uploaded file if user already has profile
-      fs.unlinkSync(req.file.path);
-
       return res.status(400).json({
         success: false,
         message: "Profile already set up for this phone number",
       });
     }
 
-    // // Prepare document data from the uploaded file
-    // const documentData = {
-    //   uri: req.file.path, // Path to the saved file
-    //   name: kycDocName || req.file.originalname,
-    //   mimeType: req.file.mimetype,
-    //   size: req.file.size,
-    // };
-
+    console.log("documentData", documentData);
     // Generate a unique vendor ID
     const vendorId = generateVendorId();
 
     // Generate a unique referral code for the user
     const userReferralCode = generateUniqueReferralCode(name);
 
-    // Create or update user
-    if (existingUser) {
-      // Update existing user
-      existingUser.Name = name;
-      existingUser.businessName = businessName;
-      existingUser.businessType = businessType;
-      existingUser.businessAddress = businessAddress;
-      existingUser.city = city;
-      existingUser.pinCode = pinCode;
-      existingUser.state = state;
-      existingUser.kycStatus = "kyc_pending";
-      // existingUser.kycDocument = documentData; // Add document data
-      existingUser.referralCode = userReferralCode;
-
-      // Check if there's a valid referral code
-      // Updated referral code section for the existing user branch
-      if (referralCode && !existingUser.referredBy) {
-        const referrer = await User.findOne({ referralCode });
-        if (referrer ) {
-          existingUser.referredBy = referrer._id;
-          // Award 100 coins to both the referrer and the referred user
-          existingUser.refralWalletAmount += 100;
-          referrer.refralWalletAmount += 100;
-          // Add the new user to the referrer's referredTo list
-          referrer.referredTo.push(existingUser._id);
-          // Increment the referral count for the referrer
-          referrer.referralCount += 1;
-
-          await referrer.save();
-          console.log("Referral reward added: 100 coins to both users");
-        }
+    // Create new user
+    const newUser = new User({
+      Name: name,
+      phoneNumber,
+      vendorId,
+      businessName,
+      businessType,
+      businessAddress,
+      city,
+      pinCode,
+      state,
+      kycStatus: "kyc_pending",
+      kycDocument: documentData,
+      referralCode: userReferralCode,
+    });
+    console.log("newUser", newUser);
+    if (referralCode) {
+      const referrer = await User.findOne({ referralCode });
+      if (referrer) {
+        newUser.referredBy = referrer._id;
+        // Award 100 coins to both the referrer and the referred user
+        newUser.refralWalletAmount += 100;
+        referrer.refralWalletAmount += 100;
+        // Add the new user to the referrer's referredTo list
+        referrer.referredTo.push(newUser._id);
+        // Increment the referral count for the referrer
+        referrer.referralCount += 1;
+        await referrer.save();
+        console.log("Referral reward added: 100 coins to both users");
       }
-
-      await existingUser.save();
-
-      return res.status(200).json({
-        success: true,
-        message: "Profile updated successfully",
-        user: {
-          name: existingUser.Name,
-          phoneNumber: existingUser.phoneNumber,
-          vendorId: existingUser.vendorId,
-          businessName: existingUser.businessName,
-          kycStatus: existingUser.kycStatus,
-        },
-      });
-    } else {
-      // Create new user
-      const newUser = new User({
-        Name: name,
-        phoneNumber,
-        vendorId,
-        businessName,
-        businessType,
-        businessAddress,
-        city,
-        pinCode,
-        state,
-        kycStatus: "kyc_pending",
-        // kycDocument: documentData, // Add document data
-        referralCode: userReferralCode,
-      });
-
-      if (referralCode) {
-        const referrer = await User.findOne({ referralCode });
-        if (referrer) {
-          newUser.referredBy = referrer._id;
-          // Award 100 coins to both the referrer and the referred user
-          newUser.refralWalletAmount += 100;
-          referrer.refralWalletAmount += 100;
-          // Add the new user to the referrer's referredTo list
-          referrer.referredTo.push(newUser._id);
-          // Increment the referral count for the referrer
-          referrer.referralCount += 1;
-          await referrer.save();
-          console.log("Referral reward added: 100 coins to both users");
-        }
-      }
-
-      await newUser.save();
-
-      return res.status(201).json({
-        success: true,
-        message: "Profile created successfully",
-        user: {
-          name: newUser.Name,
-          phoneNumber: newUser.phoneNumber,
-          vendorId: newUser.vendorId,
-          businessName: newUser.businessName,
-          kycStatus: newUser.kycStatus,
-        },
-      });
     }
+
+    await newUser.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Profile created successfully",
+      user: {
+        name: newUser.Name,
+        phoneNumber: newUser.phoneNumber,
+        vendorId: newUser.vendorId,
+        businessName: newUser.businessName,
+        kycStatus: newUser.kycStatus,
+      },
+    });
   } catch (error) {
     console.error("Profile setup error:", error);
-
-    // Clean up the file if there was an error
-    if (req.file && req.file.path) {
-      try {
-        fs.unlinkSync(req.file.path);
-      } catch (unlinkError) {
-        console.error("Error deleting file:", unlinkError);
-      }
-    }
 
     return res.status(500).json({
       success: false,

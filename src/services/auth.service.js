@@ -22,7 +22,7 @@ export const loginService = async (phoneNumber, vendorId) => {
   });
 
   if (recentOtp) {
-	console.log("OTP sent recently");
+    console.log("OTP sent recently");
     return { success: true, message: "OTP sent recently" };
   }
 
@@ -42,28 +42,41 @@ export const loginService = async (phoneNumber, vendorId) => {
 };
 
 export const verifyOTPService = async (phoneNumber, otp) => {
-  console.log("phoneNumber and otp in verify otp service:", phoneNumber, otp);
-  console.log("inside verify otp service");
-  const otps = await OTP.find({});
-  console.log("All otp in database:", otps);
-  const otpRecord = await OTP.findOne({ phoneNumber }).sort({ createdAt: -1 });
-  console.log(
-    "otprcord",
-    otpRecord,
-    "bcrypt",
-    await bcrypt.compare(otp, otpRecord.otp)
-  );
-  if (!otpRecord || !(await bcrypt.compare(otp, otpRecord.otp))) {
-    return { success: false, message: "Invalid OTP" };
+  try {
+    let success = true;
+    let message = "OTP verified successfully";
+    console.log("phoneNumber and otp in verify otp service:", phoneNumber, otp);
+    console.log("inside verify otp service");
+    const otps = await OTP.find({});
+    console.log("All otp in database:", otps);
+    const otpRecord = await OTP.findOne({ phoneNumber }).sort({
+      createdAt: -1,
+    });
+    console.log(
+      "otprcord",
+      otpRecord,
+      "bcrypt",
+      await bcrypt.compare(otp, otpRecord.otp)
+    );
+    if (!otpRecord || !(await bcrypt.compare(otp, otpRecord.otp))) {
+      console.log("otp not matched");
+      return { token: null, user: null, success: false, message: "Invalid OTP" };
+    }
+    console.log("finding user");
+    const user = await User.findOne({ phoneNumber });
+    console.log("got user:", user);
+    let token = null;
+    if (user.kycStatus === "verified") {
+      token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+    }
+    console.log("token", token);
+    await OTP.deleteOne({ _id: otpRecord._id });
+    console.log("deleted otp");
+    return { token, user, success, message };
+  } catch (e) {
+    console.log("error in verify otp service:", e);
+    return { token: null, user: null, success: false, message: "error in verification" };
   }
-  console.log("finding user");
-  const user = await User.findOne({ phoneNumber });
-  console.log("got user:", user);
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
-  console.log("token", token);
-  await OTP.deleteOne({ _id: otpRecord._id });
-  console.log("deleted otp");
-  return { token, user };
 };
 
 export const setupProfileService = async (userId, profileData) => {
