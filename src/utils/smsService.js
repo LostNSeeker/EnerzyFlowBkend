@@ -7,6 +7,7 @@ export const generateOTP = () => {
 export const sendSMS = async (to, message) => {
   try {
     // Check if environment variables are set
+    to="+91"+to;
     if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_PHONE_NUMBER) {
       console.warn('Twilio credentials not properly configured in environment variables');
       console.log(`Would send "${message}" to ${to}`);
