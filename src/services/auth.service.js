@@ -36,7 +36,7 @@ export const loginService = async (phoneNumber, vendorId) => {
     otp: await bcrypt.hash(otp, 10),
   });
   console.log("funtion call to send otp:", phoneNumber);
-  // const res=await sendSMS(phoneNumber, `Your OTP is: ${otp}`);
+  const res = await sendSMS(phoneNumber, `Your OTP is: ${otp}`);
   console.log("otp sent successfully");
   return { success: true };
 };
@@ -60,7 +60,12 @@ export const verifyOTPService = async (phoneNumber, otp) => {
     );
     if (!otpRecord || !(await bcrypt.compare(otp, otpRecord.otp))) {
       console.log("otp not matched");
-      return { token: null, user: null, success: false, message: "Invalid OTP" };
+      return {
+        token: null,
+        user: null,
+        success: false,
+        message: "Invalid OTP",
+      };
     }
     console.log("finding user");
     const user = await User.findOne({ phoneNumber });
@@ -75,7 +80,12 @@ export const verifyOTPService = async (phoneNumber, otp) => {
     return { token, user, success, message };
   } catch (e) {
     console.log("error in verify otp service:", e);
-    return { token: null, user: null, success: false, message: "error in verification" };
+    return {
+      token: null,
+      user: null,
+      success: false,
+      message: "error in verification",
+    };
   }
 };
 

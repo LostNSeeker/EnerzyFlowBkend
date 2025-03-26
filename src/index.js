@@ -56,7 +56,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/test", testRoutes);
+// app.use("/test", testRoutes);
 
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
