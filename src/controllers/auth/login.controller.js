@@ -5,8 +5,6 @@ import {
   generateVendorId,
   generateUniqueReferralCode,
 } from "../../utils/user_profile_utils.js";
-import fs from "fs";
-import { saveFile } from "../../middleware/upload.js";
 
 export const login = async (req, res) => {
   try {
@@ -80,6 +78,7 @@ export const setupProfile = async (req, res) => {
       referralCode,
       documentData,
     } = req.body;
+    
     if (!documentData.uri) {
       return res.status(400).json({
         success: false,
