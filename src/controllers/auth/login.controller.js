@@ -47,7 +47,10 @@ export const verifyOTP = async (req, res) => {
       });
     }
 
-    const { token, user,success,message } = await verifyOTPService(phoneNumber, otp);
+    const { token, user, success, message } = await verifyOTPService(
+      phoneNumber,
+      otp
+    );
 
     res.status(200).json({
       success: success,
@@ -74,19 +77,15 @@ export const setupProfile = async (req, res) => {
       city,
       pinCode,
       state,
-      kycDocName,
       referralCode,
-      image,
+      documentData,
     } = req.body;
-
-    const documentData = await saveFile(image);
-    if (!documentData) {
+    if (!documentData.uri) {
       return res.status(400).json({
         success: false,
-        message: "KYC document saving error",
+        message: "KYC document is required",
       });
     }
-
     // Check if user already exists with this phone number
     const existingUser = await User.findOne({ phoneNumber });
     if (existingUser) {
@@ -95,8 +94,6 @@ export const setupProfile = async (req, res) => {
         message: "Profile already set up for this phone number",
       });
     }
-
-    console.log("documentData", documentData);
     // Generate a unique vendor ID
     const vendorId = generateVendorId();
 

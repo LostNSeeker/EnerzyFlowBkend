@@ -40,7 +40,4 @@ export const profileValidation = [
   check("state")
     .notEmpty().withMessage("State is required")
     .trim(),
-  check("kycDocName")
-    .notEmpty().withMessage("KYC document name is required")
-    .trim(),
 ];

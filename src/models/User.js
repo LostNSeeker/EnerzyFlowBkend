@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema({
 
   kycDocument: {
     uri: { type: String },  // URL of the uploaded document
-    name: { type: String}, // Original file name
+    name: { type: String},//doc name
     mimeType: { type: String}, // File type (image/pdf)
     size: { type: Number},  // File size in bytes
   },
