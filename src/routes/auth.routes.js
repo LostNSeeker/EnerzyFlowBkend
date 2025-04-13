@@ -12,7 +12,7 @@ import { upload } from "../middleware/upload.js";
 
 const router = express.Router();
 
-router.post("/varify-token", auth, (req, res) => {
+router.post("/verify-token", auth, (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Token is valid",

@@ -1,0 +1,627 @@
+openapi: 3.0.0
+info:
+  title: Backend API for Drippit
+  version: 0.1.0
+servers:
+- url: http://127.0.0.1:5000
+  description: Backend deployment for local systems
+paths:
+  /decisions/user/{userId}:
+    post:
+      operationId: post-decisions-userId
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: string
+      summary: Create a Decision from a User
+      requestBody:
+        description: the Decision request body
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  description: User who took a decision
+                  type: string
+                productId:
+                  description: Product against which the decision was taken
+                  type: string
+                response:
+                  description: the Decision which was taken Binary(-1, +1)
+                  type: integer
+                meta:
+                  description: Extra meta data information for the Decision taken
+                  type: object
+                  example:
+                    RESPONSE_TIME_MICROSECONDS: 350
+      responses:
+        200:
+          description: You finally decided, now go commit die
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: Its in the name asshole
+                    type: string
+                  userId:
+                    description: User who took a decision
+                    type: string
+                  productId:
+                    description: Product against which the decision was taken
+                    type: string
+                  response:
+                    description: the Decision which was taken Binary(-1, +1)
+                    type: integer
+                  meta:
+                    description: Extra meta data information for the Decision taken
+                    type: object
+                    example:
+                      RESPONSE_TIME_MICROSECONDS: 350
+    get:
+      operationId: get-decisions-userId
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: string
+      summary: GET User specific decisions
+      responses:
+        200:
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: chutiya hai kya?
+                    type: string
+                  userId:
+                    description: User who took a decision
+                    type: string
+                  productId:
+                    description: Product against which the decision was taken
+                    type: string
+                  response:
+                    description: the Decision which was taken Binary(-1, +1)
+                    type: integer
+                  meta:
+                    description: Extra meta data information for the Decision taken
+                    type: object
+                    example:
+                      RESPONSE_TIME_MICROSECONDS: 350
+
+  /vendors/{vendorId}:
+    post:
+      operationId: post-vendors-vendorId
+      parameters:
+        - name: vendorId
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      summary: Add products to vendor
+      responses:
+        202:
+          description: Successfully added products to vendor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  product_ids:
+                    type: array
+                    uniqueItems: true
+                    items:
+                      type: string
+  /vendors:
+    post:
+      summary: Create a new Vendor
+      responses:
+        200:
+          description: Get new vendor if created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vendor"
+    get:
+      summary: GET all vendors
+      responses:
+        200:
+          description: Get a array of all vendors onboarded
+          content:
+            application/json:
+              schema:
+                type: array
+                uniqueItems: true
+                readOnly: true
+                items:
+                  $ref: "#/components/schemas/Vendor"
+
+  /users/login/ph/start:
+    post:
+      summary: Initiate Login using OTP auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                country_code:
+                  description: Country code for the recipient phone number
+                  type: string
+                phone_number:
+                  description: The Recipient phone number
+                  type: string
+      responses:
+        200:
+          description: Successfully sent OTP
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+  /users/login/ph/validate:
+    post:
+      summary: Validate Login using OTP auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                otp_rid:
+                  description: The request_id generated upon otp auth init
+                  type: string
+                _otp:
+                  description: The actual otp, (this shit took too much time to do)
+                  type: string
+      responses:
+        200:
+          description: Successfully validated OTP to given request_id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: The boolean representation of otp validation
+                    type: boolean
+                  message:
+                    description: It's in the f*king name
+                    type: string
+  /users:
+    get:
+      tags: []
+      summary: GET all users
+      description: ""
+      operationId: get-users
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                uniqueItems: true
+                type: array
+                readOnly: true
+                items:
+                  $ref: '#/components/schemas/User'
+      x-internal: true
+    post:
+      tags: []
+      summary: Create a new User
+      operationId: post-users
+      requestBody:
+        $ref: '#/components/requestBodies/PublicUser'
+      responses:
+        "201":
+          description: User Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{userId}:
+    get:
+      tags: []
+      summary: GET user profile
+      operationId: get-users-userId
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    patch:
+      tags: []
+      summary: PATCH endpoint
+      operationId: patch-users-userId
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        $ref: '#/components/requestBodies/PublicUser'
+      responses:
+        "202":
+          description: Changes Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      tags: []
+      summary: DELETE user profile
+      description: This api is to be used after user has requested for delete
+      operationId: delete-users-userId
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "2XX":
+          description: Success
+      x-internal: true
+  /products:
+    get:
+      tags: [ ]
+      summary: GET all products
+      description: "INTERNAL"
+      operationId: get-products
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                uniqueItems: true
+                type: array
+                readOnly: true
+                items:
+                  $ref: '#/components/schemas/Product'
+      x-internal: true
+    post:
+      tags: [ ]
+      summary: Create a new Product
+      operationId: post-products
+      requestBody:
+        description: "Body for creating a new product"
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                label:
+                  description: Label for the Product (Consumer specific metadata)
+                  type: string
+                description:
+                  description: What is this diabolical unholy ass code
+                  type: string
+                images:
+                  description: Guess the description
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                price:
+                  description: price in float
+                  type: number
+                price_meta:
+                  type: object
+                  description: Price metadata
+                  example:
+                    CURRENCY_CODE: "INR"
+                    CURRENCY_LOGO: "Rs"
+                meta:
+                  description: Extra metadata information passing field
+                  type: object
+                  example:
+                    TAGS: []
+          application/json:
+            schema:
+              type: object
+              properties:
+                label:
+                  description: Label for the Product (Consumer specific metadata)
+                  type: string
+                description:
+                  description: What is this diabolical unholy ass code
+                  type: string
+                images:
+                  description: Guess the description
+                  type: array
+                  items:
+                    type: string
+                price:
+                  description: price in float
+                  type: number
+                price_meta:
+                  type: object
+                  description: Price metadata
+                  example:
+                    CURRENCY_CODE: "INR"
+                    CURRENCY_LOGO: "₹"
+                meta:
+                  description: Extra metadata information passing field
+                  type: object
+                  example:
+                    TAGS: [ ]
+      responses:
+        "201":
+          description: Product Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+  /products/{productId}:
+    delete:
+      tags: [ ]
+      summary: DELETE product profile
+      description: This api is to be used after product has requested for delete
+      operationId: delete-products-productId
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        "2XX":
+          description: Success
+      x-internal: true
+components:
+  schemas:
+    Vendor:
+      description: Vendor schema for brands
+      title: Vendor
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: false
+          format: uuid
+        name:
+          maxLength: 20
+          nullable: false
+          type: string
+        poc_email:
+          maxLength: 120
+          nullable: false
+          type: string
+        poc_phone:
+          maxLength: 20
+          nullable: false
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"
+        meta:
+          type: object
+    User:
+      title: User
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          maxLength: 20
+          type: string
+          x-stoplight:
+            id: q4pkjh0i0dghv
+        email:
+          maxLength: 120
+          type: string
+          format: email
+          x-stoplight:
+            id: abl484hw0zpzy
+        phone:
+          maxLength: 20
+          type: string
+          x-stoplight:
+            id: 3ufluurhmg861
+        meta:
+          type: object
+          x-stoplight:
+            id: 7gilghrli215y
+        authId:
+          maxLength: 20
+          type: string
+          format: uuid
+          x-stoplight:
+            id: 11hl9jpzihsf0
+      description: Custom User class for backend@stylo
+    Product:
+      title: Product
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          maxLength: 20
+          type: string
+          x-stoplight:
+            id: 5sygcrg7agr1r
+        description:
+          type: string
+          x-stoplight:
+            id: jo02dttkhss1w
+        images:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            format: uri
+            x-stoplight:
+              id: 9y0hsuq6sdgt4
+          x-stoplight:
+            id: h4xzmwhl43wfp
+        price:
+          $ref: '#/components/schemas/PricePoint'
+        meta:
+          type: object
+          x-stoplight:
+            id: yzok3kycs6hql
+      description: Custom Product class for backend@stylo
+    PricePoint:
+      title: PricePoint
+      type: object
+      properties:
+        default:
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+          format: float
+          x-stoplight:
+            id: d5xioxcg0gfop
+        meta:
+          type: object
+          x-stoplight:
+            id: 60oo6xxwl2oab
+      x-internal: true
+    Order:
+      title: Order
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+          x-stoplight:
+            id: xxri8f1bwobur
+        status:
+          maxLength: 20
+          type: string
+          x-stoplight:
+            id: 8ivnm9d6aqbai
+        data:
+          type: object
+          x-stoplight:
+            id: ex0hivqsdwq8g
+        meta:
+          type: object
+          x-stoplight:
+            id: bbz4twfmmdbmi
+      description: Custom Order class for backend@stylo
+    Closet:
+      title: Closet
+      type: object
+      properties:
+        id:
+          maxLength: 20
+          type: string
+          format: uuid
+        label:
+          type: string
+          x-stoplight:
+            id: wcib4w9emm8dk
+        userId:
+          maxLength: 20
+          type: string
+          format: uuid
+          x-stoplight:
+            id: 3ozi0z6e8irzr
+        positiveIds:
+          uniqueItems: true
+          type: array
+          items:
+            maxLength: 20
+            type: string
+            format: uuid
+            x-stoplight:
+              id: wrlk21pd1mnv0
+          x-stoplight:
+            id: mov0z2hmqhp50
+        negativeIds:
+          uniqueItems: true
+          type: array
+          items:
+            maxLength: 20
+            type: string
+            format: uuid
+            x-stoplight:
+              id: 95vmn6cq7zs0z
+          x-stoplight:
+            id: 30v9ml3qg0xph
+        wishlistIds:
+          uniqueItems: true
+          type: array
+          items:
+            maxLength: 20
+            type: string
+            format: uuid
+            x-stoplight:
+              id: sv22ozdnarr1m
+          x-stoplight:
+            id: 9zevzgjumvuqd
+        meta:
+          type: object
+          x-stoplight:
+            id: 780y1i25xw6e4
+  requestBodies:
+    PublicUser:
+      description: Request Body for PUT /users to update a User
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                x-stoplight:
+                  id: s57b123gcihxp
+              phone:
+                type: string
+                x-stoplight:
+                  id: ngyk5212hecyj
+              email:
+                type: string
+                x-stoplight:
+                  id: 0iq28f3tttd77
+              meta:
+                type: object
+                properties:
+                  key:
+                    type: string
+                    format: password
+                    x-stoplight:
+                      id: 7abrfwnnvn6gg
+                  COUNTRY_CODE:
+                    type: string
+                x-stoplight:
+                  id: bpd2tyk9m02v7
+  securitySchemes: {}

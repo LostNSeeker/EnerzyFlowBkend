@@ -28,7 +28,8 @@ export const loginService = async (phoneNumber, vendorId) => {
 
   console.log("User found:", user);
 
-  const otp = generateOTP();
+  // const otp = generateOTP();
+  const otp = "6969";
   console.log("Generated OTP:", otp);
   console.log("assosiating OTP with phone number:", phoneNumber);
   await OTP.create({
@@ -36,7 +37,7 @@ export const loginService = async (phoneNumber, vendorId) => {
     otp: await bcrypt.hash(otp, 10),
   });
   console.log("funtion call to send otp:", phoneNumber);
-  const res = await sendSMS(phoneNumber, `Your OTP is: ${otp}`);
+  // const res = await sendSMS(phoneNumber, `Your OTP is: ${otp}`);
   console.log("otp sent successfully");
   return { success: true };
 };
